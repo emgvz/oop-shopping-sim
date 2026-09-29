@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+// test comment
+
 double BankAccount::getBalance() const
 {
     return m_balance;
