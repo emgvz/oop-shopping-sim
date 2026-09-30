@@ -30,7 +30,7 @@ bool continueTransaction()
         {
             return true;
         }
-        else if (userChoice == "y" || userChoice == "Y")
+        if (userChoice == "y" || userChoice == "Y")
         {
             return false; // stop running
         }

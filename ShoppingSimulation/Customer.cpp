@@ -23,17 +23,16 @@ void Customer::withdrawFromAccount(BankAccountType::Type bankAccountType, double
     // check bank account type
     BankAccount& account = { (bankAccountType == BankAccountType::chequing ) ? getChequingAccount() : getSavingsAccount() };
     
-    if (amountToWithdraw < account.getBalance())
+    if (amountToWithdraw <= account.getBalance())
     {
-        // if amount to withdraw is > amount in account // deny
-        double newBalance {(account.getBalance() - amountToWithdraw)};
+        double newBalance {account.getBalance() - amountToWithdraw};
         account.setBalance(newBalance);
     
-        std::cout << "The new balance for your " << (bankAccountType == BankAccountType:: chequing ? "chequing" : "savings") << " is " << "$" << account.getBalance() << '\n';
+        std::cout << "The new balance for your " << (bankAccountType == BankAccountType:: chequing ? "chequing" : "savings") << " is " << "$" << account.getBalance() << '\n' << '\n';
     }
     else
     {
-        std::cout << "Insufficient amount to withdraw! Amount must be less than what you have in the account" << '\n';
+        std::cout << "Insufficient amount to withdraw! Amount must be less than what you have in the account" << '\n' << '\n';
     }
 }
 

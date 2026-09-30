@@ -90,12 +90,6 @@ void viewAccountDetails(const std::vector<Customer>& customers)
     }
 }
 
-void withdrawFunds(std::vector<Customer>& customers)
-{
-    // check id
-    // ask which account checking or savings
-    // ask how much to withdraw
-}
 
 Customer* findCustomerByAccountId(std::vector<Customer>& customers, int customerId)
 {
@@ -113,7 +107,7 @@ Customer* findCustomerByAccountId(std::vector<Customer>& customers, int customer
     return nullptr;
 }
 
-int getAccountTypeChoice()
+int getAccountTypeChoice(int option)
 {
     while (true)
     {
@@ -122,7 +116,7 @@ int getAccountTypeChoice()
         std::cout << "1. Chequing Account" << '\n';
         std::cout << "2. Savings Account" << '\n';
 
-        std::cout << "Which account do you want to deposit to (1 for Chequing, 2 for Savings)?: ";
+        std::cout << "Which account do you want to " << (option == 1 ? "deposit to" : "withdraw from") << " (1 for Chequing, 2 for Savings)?: ";
         std::cin >> accountTypeChoice;
 
         if (!std::cin)
@@ -132,29 +126,29 @@ int getAccountTypeChoice()
             continue;
         }
         
+        // catch values that are higher 
+        
         return accountTypeChoice;
     }
 }
 
-double getAmountDeposit(int accountTypeChoice)
+double getAmount(int accountTypeChoice, int action)
 {
-    double amountDeposit{};
+    double amount{};
     
     while (true)
     {
-        std::cout << "Enter the amount to be deposited to your " << (accountTypeChoice == 1 ? "Chequing" : "Savings")
-                         << " account: ";
-        
-        std::cin >> amountDeposit;
+        std::cout << "Enter the amount to be " << (action == 1 ? "deposited to" : "withdrawn from" ) << " your " << (accountTypeChoice == 1 ? "chequing" : "savings") << " account: ";
+        std::cin >> amount;
         
         if (!std::cin)
         {
-            std::cout << "Only deposit $$$ amount!" << '\n';
+            std::cout << "Only enter numerical $$$ amount!" << '\n';
             ignoreLine();
             continue;
         } 
         
-        return amountDeposit;
+        return amount;
 
     }
 }
@@ -177,29 +171,26 @@ int getAccountID()
         
         return accountID;
     }
-    
 }
 
-void customerDeposit(int accountTypeChoice, Customer* customer, double amountToDeposit)
-{
-    BankAccountType::Type bankAccountType{};
 
-    switch (accountTypeChoice)
+void handleCustomerAction(int action, int accountTypeChoice, Customer* customer, double processAmount)
+{
+    BankAccountType::Type bankAccountType{ accountTypeChoice == 1 ? BankAccountType::chequing : BankAccountType::savings };
+    
+    switch (action)
     {
-    case 1:
-        bankAccountType = BankAccountType::chequing;
+        case 1: // deposit
+        customer->depositToAccount(bankAccountType, processAmount);
         break;
-    case 2:
-        bankAccountType = BankAccountType::savings;
+        
+        case 2: // withdraw
+        customer->withdrawFromAccount(bankAccountType, processAmount);
         break;
     }
-    
-    customer->depositToAccount(bankAccountType, amountToDeposit);
-    // deposit
-    
 }
 
-void depositFunds(std::vector<Customer>& customers)
+void handleTransactionProcess(std::vector<Customer>& customers, int action)
 {
     while (true)
     {
@@ -208,11 +199,16 @@ void depositFunds(std::vector<Customer>& customers)
     
         if (customer != nullptr) // if customer exists
         {
-            int accountTypeChoice{ getAccountTypeChoice()};
-        
-            double amountDeposit{ getAmountDeposit(accountTypeChoice)};
-        
-            customerDeposit(accountTypeChoice, customer, amountDeposit);
+            int accountTypeChoice{ getAccountTypeChoice(action)};
+            
+            // if action 1 == deposit, 2 == withdraw
+            
+            double getProcessAmount{ getAmount(accountTypeChoice, action)};
+            
+            // if action 1 == deposit, 2 == withdraw
+            
+            // 1 == checking, 2 == savings 
+            handleCustomerAction(action, accountTypeChoice, customer, getProcessAmount);
             break;
         }
     }
@@ -311,7 +307,6 @@ void createNewAccount(std::vector<Customer>& customers)
 
     std::cout << "--- Customer Account Created Successfully! ---" << '\n';
 }
-
 
 void editUpdateAccounts(std::vector<Customer>& customers)
 {
@@ -442,7 +437,6 @@ void editUpdateAccounts(std::vector<Customer>& customers)
     }
 }
 
-
 void testData(std::vector<Customer>& customers)
 {
     Customer c(BankAccount(BankAccountType::chequing, 100.00),
@@ -467,6 +461,7 @@ void testData(std::vector<Customer>& customers)
 
     customers.push_back(d);
 }
+
 
 void showMenu(std::vector<Customer>& customers)
 {
@@ -499,11 +494,13 @@ void showMenu(std::vector<Customer>& customers)
             break;
 
         case 2:
-            withdrawFunds(customers);
+            // 1 == deposit, 2 == withdraw
+            handleTransactionProcess(customers, 2);
             break;
 
         case 3:
-            depositFunds(customers);
+            // 1 == deposit, 2 == withdraw
+            handleTransactionProcess(customers, 1);
             break;
 
         case 4:
