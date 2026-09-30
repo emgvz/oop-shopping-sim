@@ -74,6 +74,8 @@ public:
     void depositToAccount(BankAccountType::Type bankAccountType, double amount);
     void withdrawFromAccount(BankAccountType::Type bankAccountType, double amount);
     
+    // move balance from account to account soon
+    
     BankAccount& getChequingAccount() { return m_chequingAccount; }
     BankAccount& getSavingsAccount() { return m_savingsAccount; }
     

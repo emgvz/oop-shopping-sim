@@ -97,11 +97,126 @@ void withdrawFunds(std::vector<Customer>& customers)
     // ask how much to withdraw
 }
 
+Customer* findCustomerByAccountId(std::vector<Customer>& customers, int customerId)
+{
+    for (Customer& customer : customers)
+    {
+        if (customer.getId() == customerId)
+        {
+            std::cout << "Account found!" << '\n';
+            return &customer;
+        }
+        
+    }
+    
+    std::cout << "Account not found! Please try again!" << '\n';
+    return nullptr;
+}
+
+int getAccountTypeChoice()
+{
+    while (true)
+    {
+        int accountTypeChoice{};
+        
+        std::cout << "1. Chequing Account" << '\n';
+        std::cout << "2. Savings Account" << '\n';
+
+        std::cout << "Which account do you want to deposit to (1 for Chequing, 2 for Savings)?: ";
+        std::cin >> accountTypeChoice;
+
+        if (!std::cin)
+        {
+            ignoreLine();
+            std::cout << "Only choose from 1 for Chequing or 2 for Savings." << '\n';
+            continue;
+        }
+        
+        return accountTypeChoice;
+    }
+}
+
+double getAmountDeposit(int accountTypeChoice)
+{
+    double amountDeposit{};
+    
+    while (true)
+    {
+        std::cout << "Enter the amount to be deposited to your " << (accountTypeChoice == 1 ? "Chequing" : "Savings")
+                         << " account: ";
+        
+        std::cin >> amountDeposit;
+        
+        if (!std::cin)
+        {
+            std::cout << "Only deposit $$$ amount!" << '\n';
+            ignoreLine();
+            continue;
+        } 
+        
+        return amountDeposit;
+
+    }
+}
+
+int getAccountID()
+{
+    int accountID{};
+    
+    while (true)
+    {
+        std::cout << "What is your Account ID:? ";
+        std::cin >> accountID;
+            
+        if (!std::cin)
+        {
+            ignoreLine();
+            std::cout << "Invalid input! Please only input numerical numbers: " << '\n';
+            continue;
+        }
+        
+        return accountID;
+    }
+    
+}
+
+void customerDeposit(int accountTypeChoice, Customer* customer, double amountToDeposit)
+{
+    BankAccountType::Type bankAccountType{};
+
+    switch (accountTypeChoice)
+    {
+    case 1:
+        bankAccountType = BankAccountType::chequing;
+        break;
+    case 2:
+        bankAccountType = BankAccountType::savings;
+        break;
+    }
+    
+    customer->depositToAccount(bankAccountType, amountToDeposit);
+    // deposit
+    
+}
+
 void depositFunds(std::vector<Customer>& customers)
 {
-    // check id
-    // ask which account checking or savings
-    // ask how much to deposit
+    while (true)
+    {
+        int accountID(getAccountID());
+        Customer* customer{findCustomerByAccountId(customers, accountID)};
+    
+        if (customer != nullptr) // if customer exists
+        {
+            int accountTypeChoice{ getAccountTypeChoice()};
+        
+            double amountDeposit{ getAmountDeposit(accountTypeChoice)};
+        
+            customerDeposit(accountTypeChoice, customer, amountDeposit);
+            break;
+        }
+    }
+    
 }
 
 double setupInitialChequingBalance()
@@ -169,7 +284,6 @@ void pressToContinue()
 void createNewAccount(std::vector<Customer>& customers)
 {
     BankAccount newChequingAccount{BankAccountType::chequing, setupInitialChequingBalance()};
-
     BankAccount newSavingsAccount{BankAccountType::savings, setupInitialSavingsBalance()};
 
     std::string firstName{createFName()};
@@ -201,7 +315,10 @@ void createNewAccount(std::vector<Customer>& customers)
 
 void editUpdateAccounts(std::vector<Customer>& customers)
 {
-    // find the id first then update that id's information
+    // will refine this using findCustomerID 
+    
+    // int accountID{getAccountID()};
+    // Customer* customer {findByCustomerID(customers, accountID};
 
     while (true)
     {
@@ -227,7 +344,7 @@ void editUpdateAccounts(std::vector<Customer>& customers)
                 while (true)
                 {
                     int choice{};
-                    
+
                     std::cout << "1. First name" << '\n';
                     std::cout << "2. Second name" << '\n';
                     std::cout << "3. Email" << '\n';
@@ -235,10 +352,10 @@ void editUpdateAccounts(std::vector<Customer>& customers)
                     std::cout << "5. Address" << '\n';
                     std::cout << "6. Occupation" << '\n';
                     std::cout << "7. Return to Main Menu" << '\n' << '\n';
-                    
+
                     std::cout << "Select field to update: ";
                     std::cin >> choice;
-                    
+
                     if (!std::cin)
                     {
                         ignoreLine();
@@ -252,7 +369,7 @@ void editUpdateAccounts(std::vector<Customer>& customers)
                     std::string newPhoneNumber{};
                     std::string newAddress{};
                     std::string newOccupation{};
-                    
+
                     switch (choice)
                     {
                     case 1:
@@ -260,8 +377,8 @@ void editUpdateAccounts(std::vector<Customer>& customers)
 
                         std::getline(std::cin >> std::ws, newFirstName);
                         customer.updatefName(newFirstName);
-                        
-                        std::cout << "First name successfully changed!"  << "\n" << "\n";
+
+                        std::cout << "First name successfully changed!" << "\n" << "\n";
 
                         continue; // brings back to the while true above
 
@@ -270,18 +387,18 @@ void editUpdateAccounts(std::vector<Customer>& customers)
 
                         std::getline(std::cin >> std::ws, newLastName);
                         customer.updatelName(newLastName);
-                        
-                        std::cout << "Last name successfully!"  << "\n" << "\n";
-                        
+
+                        std::cout << "Last name successfully!" << "\n" << "\n";
+
                         continue;
 
                     case 3:
                         std::cout << "Enter new email: ";
 
-                        std::getline(std::cin >> std::ws, newLastName);
+                        std::getline(std::cin >> std::ws, newEmail);
                         customer.updateEmail(newEmail);
 
-                        std::cout << "Email successfully changed!"  << "\n" << "\n";
+                        std::cout << "Email successfully changed!" << "\n" << "\n";
 
                         continue;
 
@@ -291,25 +408,25 @@ void editUpdateAccounts(std::vector<Customer>& customers)
                         std::getline(std::cin >> std::ws, newPhoneNumber);
                         customer.updatePhone(newPhoneNumber);
 
-                        std::cout << "Phone number successfully changed!"  << "\n" << "\n";
+                        std::cout << "Phone number successfully changed!" << "\n" << "\n";
 
                         continue;
 
                     case 5:
                         std::cout << "Enter new address: ";
                         std::getline(std::cin >> std::ws, newAddress);
-                        
+
                         customer.updateAddress(newAddress);
-                        std::cout << "Address successfully changed!"  << "\n" << "\n";
-                        
+                        std::cout << "Address successfully changed!" << "\n" << "\n";
+
                         continue;
 
                     case 6:
                         std::cout << "Enter new occupation: ";
                         std::getline(std::cin >> std::ws, newOccupation);
-                        
+
                         customer.updateOccupation(newOccupation);
-                        std::cout << "Occupation successfully changed!"  << "\n" << "\n";
+                        std::cout << "Occupation successfully changed!" << "\n" << "\n";
 
                         continue;
 
@@ -319,7 +436,7 @@ void editUpdateAccounts(std::vector<Customer>& customers)
                 }
             }
         }
-        
+
         ignoreLine();
         std::cout << "Account ID not found! Please try again!" << '\n';
     }
@@ -329,25 +446,25 @@ void editUpdateAccounts(std::vector<Customer>& customers)
 void testData(std::vector<Customer>& customers)
 {
     Customer c(BankAccount(BankAccountType::chequing, 100.00),
-        BankAccount(BankAccountType::savings, 200.00),
-        "Emile",
-        "LMAO",
-        "EMAIL",
-        "PHONE",
-        "ADDRESS",
-        "OCCUPATION");
-    
+               BankAccount(BankAccountType::savings, 200.00),
+               "Emile",
+               "TEST LNAME",
+               "EMAIL",
+               "PHONE",
+               "ADDRESS",
+               "OCCUPATION");
+
     customers.push_back(c);
-    
+
     Customer d(BankAccount(BankAccountType::chequing, 200.00),
-        BankAccount(BankAccountType::savings, 400.00),
-        "TEST",
-        "TEST",
-        "TEST EMAIL",
-        "TEST PHONE",
-        "TEST ADDRESS",
-        "TEST OCCUPATION");
-    
+               BankAccount(BankAccountType::savings, 400.00),
+               "TEST",
+               "TEST",
+               "TEST EMAIL",
+               "TEST PHONE",
+               "TEST ADDRESS",
+               "TEST OCCUPATION");
+
     customers.push_back(d);
 }
 

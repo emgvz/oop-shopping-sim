@@ -10,7 +10,7 @@ void Customer::depositToAccount(BankAccountType::Type bankAccountType, double am
         double newBalance {account.getBalance() + amountToDeposit };
         account.setBalance(newBalance);
     
-        std::cout << "The new balance for your " << (bankAccountType == BankAccountType::chequing ? "checking" : "savings") << " is " << "$" << account.getBalance() << '\n'; 
+        std::cout << "The new balance for your " << (bankAccountType == BankAccountType::chequing ? "Chequing" : "Savings") << " account is: " << "$" << account.getBalance() << '\n' << '\n'; 
     }
     else
     {
@@ -29,7 +29,7 @@ void Customer::withdrawFromAccount(BankAccountType::Type bankAccountType, double
         double newBalance {(account.getBalance() - amountToWithdraw)};
         account.setBalance(newBalance);
     
-        std::cout << "The new balance for your " << (bankAccountType == BankAccountType:: chequing ? "checking" : "savings") << " is " << "$" << account.getBalance() << '\n';
+        std::cout << "The new balance for your " << (bankAccountType == BankAccountType:: chequing ? "chequing" : "savings") << " is " << "$" << account.getBalance() << '\n';
     }
     else
     {
@@ -51,7 +51,7 @@ void Customer::printInformationInvidual() const
     std::cout << "Occupation: " << getOccupation() << '\n';
     
     std::cout << "\nInitial checking balance: $" << m_chequingAccount.getBalance() << '\n';
-    std::cout << "Initial savings balance: $" << m_chequingAccount.getBalance();
+    std::cout << "Initial savings balance: $" << m_savingsAccount.getBalance();
     std::cout << "\n-------------------------------------\n";
 
     
@@ -73,7 +73,7 @@ void Customer::printInformation() const
     std::cout << "Occupation: " << getOccupation() << '\n';
     
     std::cout << "\nChecking account balance: $" << m_chequingAccount.getBalance() << '\n';
-    std::cout << "Savings account balance: $" << m_chequingAccount.getBalance();
+    std::cout << "Savings account balance: $" << m_savingsAccount.getBalance();
     std::cout << "\n-------------------------------------\n";
 
     
