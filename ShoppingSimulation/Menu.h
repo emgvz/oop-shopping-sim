@@ -308,132 +308,117 @@ void createNewAccount(std::vector<Customer>& customers)
     std::cout << "--- Customer Account Created Successfully! ---" << '\n';
 }
 
-void editUpdateAccounts(std::vector<Customer>& customers)
+int printEditMenuOptions()
 {
-    // will refine this using findCustomerID 
+    int choice{};
     
-    // int accountID{getAccountID()};
-    // Customer* customer {findByCustomerID(customers, accountID};
-
     while (true)
     {
-        int idLookUp{};
-
-        std::cout << "Enter Account ID to edit/update user: ";
-        std::cin >> idLookUp;
-
+        std::cout << "1. First name" << '\n';
+        std::cout << "2. Second name" << '\n';
+        std::cout << "3. Email" << '\n';
+        std::cout << "4. Phone Number" << '\n';
+        std::cout << "5. Address" << '\n';
+        std::cout << "6. Occupation" << '\n';
+        std::cout << "7. Return to Main Menu" << '\n' << '\n';
+        
+        std::cout << "Select field to update: ";
+        std::cin >> choice;
+        
         if (!std::cin)
         {
             ignoreLine();
-            std::cout << "Invalid input! Please only input number. \n" << '\n';
+            std::cout << "Invalid input! Only choose from 1 - 7. \n";
             continue;
         }
+        
+        ignoreLine();
+        return choice;
+    }
+    
+}
 
-        for (Customer& customer : customers)
+void editUpdateAccounts(std::vector<Customer>& customers)
+{
+    while (true)
+    {
+        int accountID{getAccountID()};
+        Customer* customer{findCustomerByAccountId(customers, accountID)};
+
+        if (customer != nullptr)
         {
-            if (customer.getId() == idLookUp)
+            customer->printInformationInvidual();
+
+            int choice{printEditMenuOptions()};
+            std::string newEntry{};
+
+
+            switch (choice)
             {
-                std::cout << "\nCustomer found!" << '\n';
-                customer.printInformation();
+            case 1:
+                std::cout << "Enter new first name: ";
 
-                while (true)
-                {
-                    int choice{};
+                std::getline(std::cin >> std::ws, newEntry);
+                customer->updatefName(newEntry);
 
-                    std::cout << "1. First name" << '\n';
-                    std::cout << "2. Second name" << '\n';
-                    std::cout << "3. Email" << '\n';
-                    std::cout << "4. Phone Number" << '\n';
-                    std::cout << "5. Address" << '\n';
-                    std::cout << "6. Occupation" << '\n';
-                    std::cout << "7. Return to Main Menu" << '\n' << '\n';
+                std::cout << "First name successfully changed!" << "\n" << "\n";
 
-                    std::cout << "Select field to update: ";
-                    std::cin >> choice;
+                // brings back to the while true above
+                continue;
 
-                    if (!std::cin)
-                    {
-                        ignoreLine();
-                        std::cout << "Invalid input! Only choose from 1 - 7. \n";
-                        continue;
-                    }
+            case 2:
+                std::cout << "Enter new last name: ";
 
-                    std::string newFirstName{};
-                    std::string newLastName{};
-                    std::string newEmail{};
-                    std::string newPhoneNumber{};
-                    std::string newAddress{};
-                    std::string newOccupation{};
+                std::getline(std::cin >> std::ws, newEntry);
+                customer->updatelName(newEntry);
 
-                    switch (choice)
-                    {
-                    case 1:
-                        std::cout << "Enter new first name: ";
+                std::cout << "Last name successfully!" << "\n" << "\n";
+                continue;
 
-                        std::getline(std::cin >> std::ws, newFirstName);
-                        customer.updatefName(newFirstName);
+            case 3:
+                std::cout << "Enter new email: ";
 
-                        std::cout << "First name successfully changed!" << "\n" << "\n";
+                std::getline(std::cin >> std::ws, newEntry);
+                customer->updateEmail(newEntry);
 
-                        continue; // brings back to the while true above
+                std::cout << "Email successfully changed!" << "\n" << "\n";
 
-                    case 2:
-                        std::cout << "Enter new last name: ";
+                continue;
+            case 4:
+                std::cout << "Enter new phone number: ";
 
-                        std::getline(std::cin >> std::ws, newLastName);
-                        customer.updatelName(newLastName);
+                std::getline(std::cin >> std::ws, newEntry);
+                customer->updatePhone(newEntry);
 
-                        std::cout << "Last name successfully!" << "\n" << "\n";
+                std::cout << "Phone number successfully changed!" << "\n" << "\n";
 
-                        continue;
+                continue;
+            case 5:
 
-                    case 3:
-                        std::cout << "Enter new email: ";
+                std::cout << "Enter new address: ";
+                std::getline(std::cin >> std::ws, newEntry);
 
-                        std::getline(std::cin >> std::ws, newEmail);
-                        customer.updateEmail(newEmail);
+                customer->updateAddress(newEntry);
+                std::cout << "Address successfully changed!" << "\n" << "\n";
 
-                        std::cout << "Email successfully changed!" << "\n" << "\n";
+                continue;
+            case 6:
+                std::cout << "Enter new occupation: ";
+                std::getline(std::cin >> std::ws, newEntry);
 
-                        continue;
+                customer->updateOccupation(newEntry);
+                std::cout << "Occupation successfully changed!" << "\n" << "\n";
 
-                    case 4:
-                        std::cout << "Enter new phone number: ";
+                continue;
 
-                        std::getline(std::cin >> std::ws, newPhoneNumber);
-                        customer.updatePhone(newPhoneNumber);
+            case 7:
+                std::cout << '\n';
+                return;
 
-                        std::cout << "Phone number successfully changed!" << "\n" << "\n";
-
-                        continue;
-
-                    case 5:
-                        std::cout << "Enter new address: ";
-                        std::getline(std::cin >> std::ws, newAddress);
-
-                        customer.updateAddress(newAddress);
-                        std::cout << "Address successfully changed!" << "\n" << "\n";
-
-                        continue;
-
-                    case 6:
-                        std::cout << "Enter new occupation: ";
-                        std::getline(std::cin >> std::ws, newOccupation);
-
-                        customer.updateOccupation(newOccupation);
-                        std::cout << "Occupation successfully changed!" << "\n" << "\n";
-
-                        continue;
-
-                    case 7:
-                        return;
-                    }
-                }
+            default:
+                break;
             }
         }
-
-        ignoreLine();
-        std::cout << "Account ID not found! Please try again!" << '\n';
     }
 }
 
