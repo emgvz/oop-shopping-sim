@@ -1,5 +1,7 @@
 ﻿#pragma once
 #include <vector>
+#include <optional>
+
 #include "Customer.h"
 
 void ignoreLine()
@@ -90,7 +92,6 @@ void viewAccountDetails(const std::vector<Customer>& customers)
     }
 }
 
-
 Customer* findCustomerByAccountId(std::vector<Customer>& customers, int customerId)
 {
     for (Customer& customer : customers)
@@ -172,7 +173,6 @@ int getAccountID()
         return accountID;
     }
 }
-
 
 void handleCustomerAction(int action, int accountTypeChoice, Customer* customer, double processAmount)
 {
@@ -348,11 +348,11 @@ void editUpdateAccounts(std::vector<Customer>& customers)
         if (customer != nullptr)
         {
             customer->printInformationInvidual();
-
+            
             int choice{printEditMenuOptions()};
+            
             std::string newEntry{};
-
-
+            
             switch (choice)
             {
             case 1:
@@ -362,9 +362,7 @@ void editUpdateAccounts(std::vector<Customer>& customers)
                 customer->updatefName(newEntry);
 
                 std::cout << "First name successfully changed!" << "\n" << "\n";
-
-                // brings back to the while true above
-                continue;
+                return;
 
             case 2:
                 std::cout << "Enter new last name: ";
@@ -373,7 +371,7 @@ void editUpdateAccounts(std::vector<Customer>& customers)
                 customer->updatelName(newEntry);
 
                 std::cout << "Last name successfully!" << "\n" << "\n";
-                continue;
+                return;
 
             case 3:
                 std::cout << "Enter new email: ";
@@ -382,8 +380,8 @@ void editUpdateAccounts(std::vector<Customer>& customers)
                 customer->updateEmail(newEntry);
 
                 std::cout << "Email successfully changed!" << "\n" << "\n";
-
-                continue;
+                return;
+                
             case 4:
                 std::cout << "Enter new phone number: ";
 
@@ -391,8 +389,8 @@ void editUpdateAccounts(std::vector<Customer>& customers)
                 customer->updatePhone(newEntry);
 
                 std::cout << "Phone number successfully changed!" << "\n" << "\n";
-
-                continue;
+                return;
+                
             case 5:
 
                 std::cout << "Enter new address: ";
@@ -400,16 +398,15 @@ void editUpdateAccounts(std::vector<Customer>& customers)
 
                 customer->updateAddress(newEntry);
                 std::cout << "Address successfully changed!" << "\n" << "\n";
-
-                continue;
+                return;
+                
             case 6:
                 std::cout << "Enter new occupation: ";
                 std::getline(std::cin >> std::ws, newEntry);
 
                 customer->updateOccupation(newEntry);
                 std::cout << "Occupation successfully changed!" << "\n" << "\n";
-
-                continue;
+                return;
 
             case 7:
                 std::cout << '\n';
