@@ -49,13 +49,13 @@ void Customer::printInformationInvidual() const
     std::cout << "Address: " << getAddress() << '\n';
     std::cout << "Occupation: " << getOccupation() << '\n';
     
-    std::cout << "\nInitial checking balance: $" << m_chequingAccount.getBalance() << '\n';
-    std::cout << "Initial savings balance: $" << m_savingsAccount.getBalance();
-    std::cout << "\n-------------------------------------\n";
+    std::cout << "\nInitial checking balance: ";
+    m_chequingAccount.printBalance();
 
-    
-    std::cout << '\n';
-    
+    std::cout << "Initial savings balance: ";
+    m_savingsAccount.printBalance();
+
+    std::cout << "\n-------------------------------------\n";
 }
 
 void Customer::printInformation() const
@@ -71,11 +71,12 @@ void Customer::printInformation() const
     std::cout << "Address: " << getAddress() << '\n';
     std::cout << "Occupation: " << getOccupation() << '\n';
     
-    std::cout << "\nChecking account balance: $" << m_chequingAccount.getBalance() << '\n';
-    std::cout << "Savings account balance: $" << m_savingsAccount.getBalance();
-    std::cout << "\n-------------------------------------\n";
-
+    std::cout << "\nChecking account balance: "; 
+    m_chequingAccount.printBalance();
     
-    std::cout << '\n';
+    std::cout << "Savings account balance: ";
+    m_savingsAccount.printBalance();
+    
+    std::cout << "\n-------------------------------------\n";
     
 }

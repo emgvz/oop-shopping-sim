@@ -87,7 +87,7 @@ void viewAccountDetails(const std::vector<Customer>& customers)
 
     for (const Customer& customer : customers)
     {
-        customer.printInformationInvidual();
+        customer.printInformation();
         std::cout << '\n';
     }
 }
@@ -347,7 +347,7 @@ void editUpdateAccounts(std::vector<Customer>& customers)
 
         if (customer != nullptr)
         {
-            customer->printInformationInvidual();
+            customer->printInformation();
             
             int choice{printEditMenuOptions()};
             

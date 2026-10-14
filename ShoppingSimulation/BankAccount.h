@@ -21,12 +21,12 @@ private:
     double m_balance {};
     
 public:
-    BankAccount(BankAccountType::Type accountType, double balance) :
-    m_accountType(accountType),
-    m_balance(balance) {}
+    BankAccount(BankAccountType::Type accountType, double balance);
     
     double getBalance() const;
     void setBalance(double newBalance);
+    
+    void printBalance() const;
     
 };
 

@@ -29,14 +29,14 @@ private:
 public:
     Customer() = default;
     
-    Customer(const BankAccount& chequingAccount,
-        const BankAccount& savingsAccount,
-        const std::string& firstName,
-        const std::string& lastName,
-        const std::string& email,
-        const std::string& phone,
-        const std::string& address,
-        const std::string& occupation
+    Customer(BankAccount chequingAccount,
+        BankAccount savingsAccount,
+        std::string firstName,
+        std::string lastName,
+        std::string email,
+        std::string phone,
+        std::string address,
+        std::string occupation
         ) : 
     
     m_id( s_idIdentifier++ ),
