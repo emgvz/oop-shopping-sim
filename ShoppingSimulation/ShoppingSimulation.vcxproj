@@ -157,12 +157,17 @@
   <ItemGroup>
     <ClCompile Include="BankAccount.cpp" />
     <ClCompile Include="Customer.cpp" />
+    <ClCompile Include="Product.cpp" />
     <ClCompile Include="ShoppingSimulation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BankAccount.h" />
+    <ClInclude Include="BankFunctionalities.h" />
     <ClInclude Include="Customer.h" />
     <ClInclude Include="Menu.h" />
+    <ClInclude Include="Product.h" />
+    <ClInclude Include="ProductFunctionalities.h" />
+    <ClInclude Include="Utilities.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />

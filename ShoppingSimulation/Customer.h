@@ -2,8 +2,10 @@
 #define CUSTOMER_H
 
 #include <format>
+#include <vector>
 
 #include "BankAccount.h"
+#include "Product.h"
 #include <string>
 #include <string_view>
 
@@ -24,6 +26,11 @@ private:
     std::string m_phone{"???"};
     std::string m_address{"???"};
     std::string m_occupation{"???"};
+
+    std::vector<Product> productOwn{};
+    std::vector<Product> wishlistProducts{};
+
+    // std::vector<Transaction> transaction{};
     
     // constructors
 public:
@@ -60,8 +67,8 @@ public:
     std::string_view getOccupation() const { return m_occupation; }
     
     void depositToAccount(BankAccount::Type bankAccountType, double amount);
-    void withdrawFromAccount(BankAccount::Type bankAccountType, double amount);
-    
+    void withdrawFromAccount(BankAccount::Type bankAccountType, double amount);\
+
     // move balance from account to account soon
     
     BankAccount& getChequingAccount() { return m_chequingAccount; }

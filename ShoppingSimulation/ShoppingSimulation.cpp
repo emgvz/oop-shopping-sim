@@ -6,27 +6,26 @@
 #include "Customer.h"
 
 /*
- * Person class
- * Bank class 
+ * TODO
  * Item class?
  * Store class
- * 
- * 
- * TODO
-
+ * Transaction class
  * TABLE FORMATTING???
  */
 
 int main()
 {
     std::vector<Customer> customers {};
+    std::vector<Product> products{};
+    // std::vector<Transaction> transactions{};
+
     
-    testData(customers); 
+    testData(customers);
+    insertProductData(products);
     
     do
     {
-        // menu for 2 options 1. Banking 2. Shopping
-        showMenu(customers);
+        showMenu(customers, products);
 
     }
     while (continueTransaction());
