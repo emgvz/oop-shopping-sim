@@ -78,3 +78,10 @@ void Customer::printInformation() const
     std::cout << "-------------------------------------\n\n";
     
 }
+
+/* void Customer::printItemsBought() const
+{
+
+}
+
+*/

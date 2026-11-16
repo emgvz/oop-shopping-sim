@@ -76,7 +76,7 @@ public:
     
     void printInformationIndividual() const;
     void printInformation() const;
-/*    void printItemsBough() const;*/
+/*    void printItemsBought() const;*/
     
 };
 

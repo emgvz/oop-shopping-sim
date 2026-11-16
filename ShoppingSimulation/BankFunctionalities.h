@@ -110,7 +110,7 @@ Customer* findCustomerByAccountId(std::vector<Customer>& customers, int customer
     return nullptr;
 }
 
-int getAccountTypeChoice(int option)
+int getAccountTypeChoice(int transactionTracker, int bankShoppingTracker)
 {
     while (true)
     {
@@ -119,7 +119,18 @@ int getAccountTypeChoice(int option)
         std::cout << "\t1. Chequing Account" << '\n';
         std::cout << "\t2. Savings Account" << '\n' << '\n';
 
-        std::cout << "Which account do you want to " << (option == 1 ? "deposit to" : "withdraw from") << " (1 for Chequing, 2 for Savings)?: ";
+        std::cout << "Bk shopping tracker: " << bankShoppingTracker << '\n';
+
+        if (bankShoppingTracker == 1)
+        {
+            std::cout << "Which account do you want to " << (transactionTracker == 1 ? "deposit to" : "withdraw from?") << " (1 for Chequing, 2 for Savings): ";
+        }
+
+        if (bankShoppingTracker == 2)
+        {
+            std::cout << "Which account do you want to use for this purchase? (1 for Chequing, 2 for Savings): ";
+        }
+
         std::cin >> accountTypeChoice;
 
         if (!std::cin)
@@ -155,13 +166,13 @@ double getAmount(int accountTypeChoice, int action)
     }
 }
 
-int getAccountID()
+int getAccountID(int bankShoppingTracker)
 {
     int accountID{};
 
     while (true)
     {
-        std::cout << "What is your Account ID? (-1 to go back to the Bank Main Menu): ";
+        std::cout << "What is your Account ID? (-1 to go back to the " << (bankShoppingTracker == 1 ? "Bank " : "Shopping ") << "Main Menu): ";
         std::cin >> accountID;
 
         if (!std::cin)
@@ -195,18 +206,75 @@ void handleCustomerAction(int action, int accountTypeChoice, Customer* customer,
     }
 }
 
-void handleTransactionProcess(std::vector<Customer>& customers, int action)
+void handleCustomerAction(int accountTypeChoice, Customer* customer, double processAmount)
 {
-    clearScreen();
+    BankAccount::Type bankAccountType{ accountTypeChoice == 1 ? BankAccount::chequing : BankAccount::savings };
 
-    std::string_view transactionType{ action == 1 ? "Deposit" : "Withdrawal" };
+    customer->withdrawFromAccount(bankAccountType, processAmount);    
+}
 
-    std::cout << "=== BANK OF ROMNIE : " << transactionType << " ===\n";
-    std::cout << transactionType << " has never been easier!\n\n";
+std::string_view confirmString()
+{
+    std::string str{};
 
     while (true)
     {
-        int accountID(getAccountID());
+        std::cout << "Choose this account to make a purchase (y for YES or Y ? ";
+        std::cin >> str;
+
+        if (!std::cin)
+        {
+            ignoreLine();
+            continue;
+        }
+
+        ignoreLine();
+        return str;
+    }
+}
+
+bool confirmAccountUse()
+{
+    std::string_view custChoice{ confirmString() };
+
+    while (true)
+    {
+        if (custChoice == "y" || custChoice == "Y")
+        {
+            return true;
+        }
+
+        if (custChoice == "n" || custChoice == "N")
+        {
+           return false;
+        }
+
+        return false;
+    }
+}
+
+void handleTransactionProcess(std::vector<Customer>& customers, int transactionTracker, int bankShoppingTracker)
+{
+    clearScreen();
+
+    if (bankShoppingTracker == 1)
+    {
+        std::string_view transactionType{ transactionTracker == 1 ? "Deposit" : "Withdrawal" };
+
+        std::cout << "=== BANK OF ROMNIE : " << transactionType << " ===\n";
+        std::cout << transactionType << " has never been easier!\n\n";
+    }
+
+    // do something with bankShoppingTracker == 2
+    /*
+    
+    
+    */
+    
+
+    while (true)
+    {
+        int accountID(getAccountID(bankShoppingTracker));
 
         if (accountID == -1)
         {
@@ -219,21 +287,44 @@ void handleTransactionProcess(std::vector<Customer>& customers, int action)
         {
             customer->printInformation();
 
-            int accountTypeChoice{ getAccountTypeChoice(action) };
+            int accountTypeChoice{ getAccountTypeChoice(transactionTracker, bankShoppingTracker) };
 
             // if action 1 == deposit, 2 == withdraw
 
-            double getProcessAmount{ getAmount(accountTypeChoice, action) };
+            if (bankShoppingTracker == 1)
+            {
+                double getProcessAmount{ getAmount(accountTypeChoice, transactionTracker) };
 
-            // 1 == checking, 2 == savings 
-            handleCustomerAction(action, accountTypeChoice, customer, getProcessAmount);
+                // 1 == checking, 2 == savings 
+                handleCustomerAction(transactionTracker, accountTypeChoice, customer, getProcessAmount);
 
-            std::cout << "\n--- Updated Account Details ---\n";
-            customer->printInformation();
+                std::cout << "\n--- Updated Account Details ---\n";
+                customer->printInformation();
 
-            pressToContinue();
+                pressToContinue();
 
-            break;
+                break;
+            }
+
+            if (bankShoppingTracker == 2)
+            {
+                // handleCustomerAction(accountTypeChoice, customer, processAmount);
+                // print customer's list of products and their balance
+
+                bool confirmAccountUse();
+
+                
+
+
+
+
+                // confirm account 
+                std::cout << "You're in the shopping purchase function" << '\n';
+
+                pressToContinue();
+
+                break;
+            }
         }
 
     }
@@ -418,7 +509,7 @@ int printEditMenuOptions()
 
 // show previous change vs current change
 
-void editUpdateAccounts(std::vector<Customer>& customers)
+void editUpdateAccounts(std::vector<Customer>& customers, int bankShoppingTracker)
 {
     while (true)
     {
@@ -426,7 +517,7 @@ void editUpdateAccounts(std::vector<Customer>& customers)
 
         std::cout << "Before we make changes to your account, first we would like to ask for your Account ID." << '\n';
 
-        int accountID{ getAccountID() };
+        int accountID{ getAccountID(bankShoppingTracker) };
         Customer* customer{ findCustomerByAccountId(customers, accountID) };
 
         if (customer != nullptr)
@@ -562,11 +653,13 @@ void testData(std::vector<Customer>& customers)
     customers.push_back(d);
 }
 
-void showBankingMenu(std::vector<Customer>& customers)
+void showBankingMenu(std::vector<Customer>& customers, int bankShoppingTracker)
 {
     while (true)
     {
         clearScreen();
+
+        int transactionTracker{};
 
         std::cout << "=== BANK MANAGEMENT SYSTEM ===\n";
         std::cout << "\t1. View Account Details" << '\n';
@@ -598,13 +691,13 @@ void showBankingMenu(std::vector<Customer>& customers)
             break;
 
         case 2:
-            // 1 == deposit, 2 == withdraw
-            handleTransactionProcess(customers, 2);
+            // 1 == deposit, 2 == withdraw || customers vector, action, check if it's coming from bank or shopping option
+            handleTransactionProcess(customers, transactionTracker == 2, bankShoppingTracker);
             break;
 
         case 3:
             // 1 == deposit, 2 == withdraw
-            handleTransactionProcess(customers, 1);
+            handleTransactionProcess(customers, transactionTracker == 1, bankShoppingTracker);
             break;
 
         case 4:
@@ -612,7 +705,7 @@ void showBankingMenu(std::vector<Customer>& customers)
             break;
 
         case 5:
-            editUpdateAccounts(customers);
+            editUpdateAccounts(customers, bankShoppingTracker);
             break;
 
         case 6:

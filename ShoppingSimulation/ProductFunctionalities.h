@@ -90,35 +90,48 @@ void browseCatalog(std::vector<Product>& products)
 
 }
 
-void purchaseProducts(std::vector<Customer>& customer, std::vector<Product>& product)
+void purchaseProducts(std::vector<Customer>& customer, std::vector<Product>& product, int bankOrShopping)
 {
     clearScreen();
 
     std::cout << "Who is buying from Romnie's Store?" << '\n';
+
     /*
     ask account to identify who is buying
-     - find accountID
+    - find accountID
 
-    show their balance for that account
-    show the browseCatalog(product) list
-    ask if they would like to proceed with their current account
-    ask which product id to purchase
-
-    if customer selects a product that has 0 qty, return back
-
-    check if their balance meets the product's price
-    if they meet the product's balance, ask how much qty is the user buying,
-
-    if user entered qty x price that is higher than what the user has on their checking
-
-    balance = 150 - (price X qty)
-    checking or savings account - balance (if this one is above 0, we should be good)
-
-
-
-    
-    
+    - show their balance for that account
     */
+
+    handleTransactionProcess(customer, 0, bankOrShopping);
+    
+   // show the browseCatalog(product) list
+
+    browseCatalog(product);
+   
+    // ask if they would like to proceed with their current account
+
+
+    
+    //ask which product id to purchase
+
+    //find productid
+    // product[id].getPrice();
+
+    //if customer selects a product that has 0 qty, return back
+
+    //check if their balance meets the product's price
+    //if they meet the product's balance, ask how much qty is the user buying,
+
+    //if user entered qty x price that is higher than what the user has on their checking
+
+    //balance = 150 - (price X qty)
+    //checking or savings account - balance (if this one is above 0, we should be good)*/
+
+
+
+ 
+    
     
     
 }
@@ -128,7 +141,7 @@ void transactionHistory(std::vector<Customer>& customer, std::vector<Product>& p
 
 }
 
-void showShoppingMenu(std::vector<Customer>& customers, std::vector<Product>& products)
+void showShoppingMenu(std::vector<Customer>& customers, std::vector<Product>& products, int bankOrShopping)
 {
     while (true)
     {
@@ -162,7 +175,7 @@ void showShoppingMenu(std::vector<Customer>& customers, std::vector<Product>& pr
             break;
 
         case 2:
-             purchaseProducts(customers, products);
+             purchaseProducts(customers, products, bankOrShopping);
             break;
 
         case 3:
