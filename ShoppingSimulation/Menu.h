@@ -8,6 +8,7 @@
 #include "BankFunctionalities.h"
 #include "ProductFunctionalities.h"
 
+// test comment from laptop
 void showMenu(std::vector<Customer>& customers, std::vector<Product>& products)
 {
     while (true)
