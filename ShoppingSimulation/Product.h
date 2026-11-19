@@ -5,7 +5,6 @@
 
 class Product
 {
-	// enum type school, etc
 public:
 	Product() = default;
 
@@ -57,6 +56,7 @@ public:
 	Status getPStatus() const { return m_status; }
 
 	void printProducts() const;
+	void printProductsCust() const;
 };
 
 inline Product::Product(Type pType,

@@ -14,7 +14,6 @@ void showMenu(std::vector<Customer>& customers, std::vector<Product>& products)
     while (true)
     {
         int menuOption{};
-        int bankShoppingTracker{};
 
         clearScreen();
         std::cout << "Welcome to Romnie's Banking and Shopping Simulation!" << '\n';
@@ -38,12 +37,12 @@ void showMenu(std::vector<Customer>& customers, std::vector<Product>& products)
 
         switch (menuOption)
         {
-        case 1: // 1 == customer chose the banking option // 2 == customer chose the shopping option
-            showBankingMenu(customers, bankShoppingTracker = 1);
+        case 1:
+            showBankingMenu(customers, products);
             break;
 
         case 2:
-            showShoppingMenu(customers, products, bankShoppingTracker = 2);
+            showShoppingMenu(customers, products);
             break;
 
         case 3:

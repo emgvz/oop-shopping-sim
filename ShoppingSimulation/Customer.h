@@ -27,7 +27,7 @@ private:
     std::string m_address{"???"};
     std::string m_occupation{"???"};
 
-    std::vector<Product> productOwn{};
+    std::vector<Product> m_productsOwned{};
     std::vector<Product> wishlistProducts{};
 
     // std::vector<Transaction> transaction{};
@@ -65,9 +65,10 @@ public:
     std::string_view getPhone() const { return m_phone; }
     std::string_view getAddress() const { return m_address; }
     std::string_view getOccupation() const { return m_occupation; }
+    std::vector<Product>& getProducts() { return m_productsOwned; }
     
     void depositToAccount(BankAccount::Type bankAccountType, double amount);
-    void withdrawFromAccount(BankAccount::Type bankAccountType, double amount);\
+    void withdrawFromAccount(BankAccount::Type bankAccountType, double amount);
 
     // move balance from account to account soon
     
@@ -76,8 +77,10 @@ public:
     
     void printInformationIndividual() const;
     void printInformation() const;
-/*    void printItemsBought() const;*/
-    
+    void printBalances() const;
+
+    void addPurchasedItems(Product product, int custQtyPurchase);
+    void printItemsBought() const;
 };
 
 inline Customer::Customer(BankAccount chequingAccount,

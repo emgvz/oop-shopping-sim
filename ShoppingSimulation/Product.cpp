@@ -1,7 +1,6 @@
 #include "Product.h"
 #include <iostream>
 #include <iomanip>
-
 #include <format>
 
 std::string_view convertTypeToStr(Product::Type type)
@@ -48,4 +47,16 @@ void Product::printProducts() const
 	std::cout << std::setw(15) << std::format("${}",getPrice());
 	std::cout << std::right << std::setw(15) << getQuantity();
 	std::cout << std::right << std::setw(15) << convertStatusToStr(getPStatus()) << '\n';
+}
+
+void Product::printProductsCust() const
+{
+	double totalCost{ getPrice() * getQuantity() };
+
+	std::cout << std::left << std::setw(10) << getPID();
+	std::cout << std::setw(20) << getPName();
+	std::cout << std::setw(15) << convertTypeToStr(getPType());
+	std::cout << std::setw(15) << std::format("${}", getPrice());
+	std::cout << std::right << std::setw(15) << getQuantity();
+	std::cout << std::right << std::setw(15) << std::format("${}", totalCost) << '\n';
 }

@@ -2,6 +2,22 @@
 
 #include <iostream>
 
+inline void clearScreen()
+{
+#if defined(_WIN32) || defined (_WIN64)
+    std::system("cls");
+#else
+    std::system("clear");
+#endif
+}
+
+inline void ignoreLine()
+{
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+
+}
 
 bool continueTransaction()
 {
@@ -20,23 +36,13 @@ bool continueTransaction()
         {
             return false; // stop running
         }
+
+        else
+        {
+            std::cout << "Only acceptable options are y or n. Please try again." << '\n';
+            ignoreLine();
+            continue;
+        }
     }
-
-}
-
-inline void clearScreen()
-{
-#if defined(_WIN32) || defined (_WIN64)
-    std::system("cls");
-#else
-    std::system("clear");
-#endif
-}
-
-inline void ignoreLine()
-{
-    std::cin.clear();
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
 
 }
