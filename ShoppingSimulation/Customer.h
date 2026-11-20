@@ -6,6 +6,7 @@
 
 #include "BankAccount.h"
 #include "Product.h"
+#include "Transaction.h"
 #include <string>
 #include <string_view>
 
@@ -30,7 +31,7 @@ private:
     std::vector<Product> m_productsOwned{};
     std::vector<Product> wishlistProducts{};
 
-    // std::vector<Transaction> transaction{};
+    std::vector<Transaction> m_custTransaction{};
     
     // constructors
 public:
@@ -65,10 +66,11 @@ public:
     std::string_view getPhone() const { return m_phone; }
     std::string_view getAddress() const { return m_address; }
     std::string_view getOccupation() const { return m_occupation; }
+
     std::vector<Product>& getProducts() { return m_productsOwned; }
     
-    void depositToAccount(BankAccount::Type bankAccountType, double amount);
-    void withdrawFromAccount(BankAccount::Type bankAccountType, double amount);
+    bool depositToAccount(BankAccount::Type bankAccountType, double amount);
+    bool withdrawFromAccount(BankAccount::Type bankAccountType, double amount);
 
     // move balance from account to account soon
     
@@ -81,6 +83,8 @@ public:
 
     void addPurchasedItems(Product product, int custQtyPurchase);
     void printItemsBought() const;
+    void addTransactionItems(Transaction transaction);
+    void printTransaction() const;
 };
 
 inline Customer::Customer(BankAccount chequingAccount,

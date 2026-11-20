@@ -1,6 +1,8 @@
 ﻿#ifndef BANKACCOUNT_H
 #define BANKACCOUNT_H
 
+#include <string_view>
+
 
 class BankAccount
 {
@@ -25,5 +27,10 @@ private:
     double m_balance {};
 };
 
+inline BankAccount::BankAccount(Type accountType, double balance) :
+    m_accountType{ accountType },
+    m_balance{ balance } {}
+
+std::string_view convertBankAccountTypeToStr(BankAccount::Type type);
 
 #endif

@@ -161,7 +161,7 @@ bool checkProductQty(Product* product, int custQty)
 		
 }
 
-void purchaseProducts(std::vector<Customer>& customer, std::vector<Product>& products, std::string_view transactionType="Purchase")
+void purchaseProducts(std::vector<Customer>& customer, std::vector<Product>& products, Transaction::Type transactionType)
 {
 	PurchasingCustomer purchasingCust{ handleTransactionProcess(customer, products, transactionType) };
 
@@ -236,6 +236,8 @@ void purchaseProducts(std::vector<Customer>& customer, std::vector<Product>& pro
 					purchasingCust.getCustomer()->printItemsBought();
 					purchasingCust.getCustomer()->printBalances();
 
+					// TODO if customer buys the same item
+					// we can probably just add the quantity rather a new id? or a new entry to the vector
 					pressToContinue();
 				}
 				else // when customer ordered more than the products stock
@@ -259,6 +261,8 @@ void showShoppingMenu(std::vector<Customer>& customers, std::vector<Product>& pr
 	while (true)
 	{
 		int shoppingOption{};
+
+		Transaction::Type purchaseTransaction{ Transaction::Purchase };
 
 		clearScreen();
 		std::cout << "=== SHOPPING MENU ===\n";
@@ -288,7 +292,7 @@ void showShoppingMenu(std::vector<Customer>& customers, std::vector<Product>& pr
 			break;
 
 		case 2:
-			purchaseProducts(customers, products);
+			purchaseProducts(customers, products, purchaseTransaction);
 			pressToContinue();
 			break;
 

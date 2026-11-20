@@ -2,9 +2,17 @@
 
 #include <iostream>
 
-BankAccount::BankAccount(Type accountType, double balance) :
-    m_accountType{accountType},
-    m_balance{balance} {}
+std::string_view convertBankAccountTypeToStr(BankAccount::Type type)
+{
+    switch (type)
+    {
+    case BankAccount::chequing:
+        return "Chequing";
+    case BankAccount::savings:
+        return "Savings";
+    }
+}
+
 
 double BankAccount::getBalance() const
 {

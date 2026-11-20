@@ -160,6 +160,7 @@
     <ClCompile Include="Product.cpp" />
     <ClCompile Include="PurchasingCustomer.cpp" />
     <ClCompile Include="ShoppingSimulation.cpp" />
+    <ClCompile Include="Transaction.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BankAccount.h" />
@@ -169,6 +170,7 @@
     <ClInclude Include="Product.h" />
     <ClInclude Include="ProductFunctionalities.h" />
     <ClInclude Include="PurchasingCustomer.h" />
+    <ClInclude Include="Transaction.h" />
     <ClInclude Include="Utilities.h" />
   </ItemGroup>
   <ItemGroup>

@@ -4,7 +4,7 @@
 #include "iomanip"
 #include "format"
 
-void Customer::depositToAccount(BankAccount::Type bankAccountType, double amountToDeposit)
+bool Customer::depositToAccount(BankAccount::Type bankAccountType, double amountToDeposit)
 {
     if (amountToDeposit >= 0)
     {
@@ -15,14 +15,16 @@ void Customer::depositToAccount(BankAccount::Type bankAccountType, double amount
         account.setBalance(newBalance);
     
         std::cout << "\nThe new balance for your " << (bankAccountType == BankAccount::chequing ? "Chequing" : "Savings") << " account is: " << "$" << account.getBalance() << '\n' << '\n'; 
+        return true;
     }
     else
     {
         std::cout << "\nI'm sorry. You can't deposit that amount" << '\n';
+        return false;
     }
 }
 
-void Customer::withdrawFromAccount(BankAccount::Type bankAccountType, double amountToWithdraw)
+bool Customer::withdrawFromAccount(BankAccount::Type bankAccountType, double amountToWithdraw)
 {
     // check bank account type
     BankAccount& account = { (bankAccountType == BankAccount::chequing ) ? getChequingAccount() : getSavingsAccount() };
@@ -33,10 +35,12 @@ void Customer::withdrawFromAccount(BankAccount::Type bankAccountType, double amo
         account.setBalance(newBalance);
     
         std::cout << "\nThe new balance for your " << (bankAccountType == BankAccount::chequing ? "Chequing Account" : "Savings Account") << " is " << "$" << account.getBalance() << '\n' << '\n';
+        return true;
     }
     else
     {
         std::cout << "\nInsufficient amount to withdraw! Amount must be less than what you have in the account" << '\n' << '\n';
+        return false;
     }
 }
 
@@ -101,9 +105,13 @@ void Customer::printBalances() const
 void Customer::addPurchasedItems(Product product, int custQtyPurchase)
 {
     product.updateQuantity(custQtyPurchase);
-
+    
     m_productsOwned.push_back(product);
+}
 
+void Customer::addTransactionItems(Transaction transaction)
+{
+    m_custTransaction.push_back(transaction);
 }
 
 void Customer::printItemsBought() const
@@ -130,6 +138,35 @@ void Customer::printItemsBought() const
     }
 
     std::cout << "==========================================================================================" << "\n" << "\n";
+}
+
+void Customer::printTransaction() const
+{
+
+    if (m_custTransaction.empty())
+    {
+        std::cout << "There are no transactions available." << '\n' << '\n';
+        return;
+    }
+
+    std::cout << std::left << std::setw(10) << "ID";
+    std::cout << std::setw(20) << "Account Type";
+    std::cout << std::setw(20) << "Transaction Type";
+    std::cout << std::right << std::setw(20) << "Transaction Amount";
+    std::cout << std::right << std::setw(15) << "Balance";
+    std::cout << std::right << std::setw(15) << "Status" << '\n';
+
+
+    std::cout << "====================================================================================================" << "\n" << "\n";
+
+    for (const Transaction& t : m_custTransaction)
+    {
+        t.printTransaction();
+        std::cout << '\n';
+    }
+
+    std::cout << "====================================================================================================" << "\n" << "\n";
+
 }
 
 

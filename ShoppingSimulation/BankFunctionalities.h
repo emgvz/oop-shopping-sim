@@ -2,6 +2,7 @@
 #define BANKFUNCTIONALITIES_H
 
 #include "PurchasingCustomer.h"
+#include "Transaction.h"
 
 // create customer details
 
@@ -108,11 +109,10 @@ Customer* findCustomerByAccountId(std::vector<Customer>& customers, int customer
         }
     }
 
-    std::cout << "Account not found! Please try again!" << '\n';
     return nullptr;
 }
 
-int getAccountTypeChoice(std::string_view transactionType, std::string_view prompt)
+int getAccountTypeChoice(Transaction::Type transactionType, std::string_view prompt)
 {
     while (true)
     {
@@ -121,18 +121,12 @@ int getAccountTypeChoice(std::string_view transactionType, std::string_view prom
         std::cout << "\t1. Chequing Account" << '\n';
         std::cout << "\t2. Savings Account" << '\n' << '\n';
 
-
-        if (transactionType == "Withdraw" || transactionType == "Deposit" || transactionType == "Purchase")
+        
+        if (transactionType == Transaction::Withdrawal || transactionType == Transaction::Deposit || transactionType == Transaction::Purchase)
         // if transaction is either withdraw or deposit
         std::cout << prompt;
 
         std::cin >> accountTypeChoice;
-
-        if (accountTypeChoice > 2 || accountTypeChoice < 0)
-        {
-            std::cout << "Only available options are 1 for Chequing or 2 for Savings. Please try again." << '\n' << '\n';
-            continue;
-        }
 
         if (!std::cin)
         {
@@ -141,19 +135,25 @@ int getAccountTypeChoice(std::string_view transactionType, std::string_view prom
             continue;
         }
 
+        if (accountTypeChoice > 2 || accountTypeChoice <= 0)
+        {
+            std::cout << "Only available options are 1 for Chequing or 2 for Savings. Please try again." << '\n' << '\n';
+            continue;
+        }
+
         ignoreLine();
         return accountTypeChoice;
     }
 }
 
-double getAmount(std::string_view transactionType, std::string_view prompt)
+double getAmount(Transaction::Type transactionType, std::string_view prompt)
 {
     double amount{};
 
     while (true)
     {
 
-        if (transactionType == "Withdraw" || transactionType == "Deposit")
+        if (transactionType == Transaction::Withdrawal || transactionType == Transaction::Deposit|| transactionType == Transaction::Purchase )
         {
             std::cout << prompt;
         }
@@ -197,18 +197,28 @@ int getID(std::string_view prompt)
     }
 }
 
-void handleCustomerAction(std::string_view transactionType, int accountTypeChoice, Customer* customer, double processAmount)
+bool handleCustomerAction(Transaction::Type transactionType, int accountTypeChoice, Customer* customer, double processAmount)
 {
     BankAccount::Type bankAccountType{ accountTypeChoice == 1 ? BankAccount::chequing : BankAccount::savings };
 
-    if (transactionType == "Withdraw" || transactionType == "Purchase")
+    if (transactionType == Transaction::Withdrawal || transactionType == Transaction::Purchase)
     {
-        customer->withdrawFromAccount(bankAccountType, processAmount);
+        if (customer->withdrawFromAccount(bankAccountType, processAmount))
+        {
+            return true;
+        }
+
+        return false;
     }
 
-    if (transactionType == "Deposit")
+    if (transactionType == Transaction::Deposit)
     {
-        customer->depositToAccount(bankAccountType, processAmount);
+        if (customer->depositToAccount(bankAccountType, processAmount))
+        {
+            return true;
+        }
+
+        return false;
     }
     
 }
@@ -243,32 +253,70 @@ bool confirmAccountUse(int accountType)
     }
 }
 
-PurchasingCustomer handleTransactionProcess(std::vector<Customer>& customers, std::vector<Product>& product, std::string_view transactionType)
+double balanceAfterTransaction(BankAccount::Type type, Customer* customer)
+{
+    return (type == BankAccount::chequing ? customer->getChequingAccount().getBalance() : customer->getSavingsAccount().getBalance());
+}
+
+BankAccount::Type getAccountType(int accountTypeChoice)
+{
+    return (accountTypeChoice == 1 ? BankAccount::chequing : BankAccount::savings);
+}
+
+bool checkTransactionType(Transaction::Type tType)
+{
+    switch (tType)
+    {
+    case Transaction::Withdrawal:
+        return true;
+    case Transaction::Deposit:
+        return true;
+    case Transaction::Purchase:
+        return false;
+    default:
+        return false;
+    }
+}
+
+std::string bankShoppingMainMenuStr(Transaction::Type type)
+{
+    switch (type)
+    {
+    case Transaction::Withdrawal:
+    case Transaction::Deposit:
+            return "Bank ";
+    case Transaction::Purchase:
+            return "Shopping ";
+    default:
+        return "???";
+
+    }
+}
+
+PurchasingCustomer handleTransactionProcess(std::vector<Customer>& customers, std::vector<Product>& product, Transaction::Type transactionType)
 {
     clearScreen();
 
-    if (transactionType == "Withdraw" || transactionType == "Deposit")
+    if (checkTransactionType(transactionType))
     {
-        std::cout << "=== BANK OF ROMNIE : " << transactionType << " ===\n";
-        std::cout << transactionType << " has never been easier!\n\n";
+        std::cout << "=== BANK OF ROMNIE : " << convertTransactionTypeToStr(transactionType) << " ===\n";
+        std::cout << convertTransactionTypeToStr(transactionType) << " has never been easier!\n\n";
     }
 
-    if (transactionType == "Purchase")
+    else
     {
-        std::cout << "=== SHOP OF ROMNIE : Purchase ===" << '\n';
+        std::cout << "=== SHOP OF ROMNIE : " << convertTransactionTypeToStr(transactionType) << " ===\n";
     }
-    
     
     while (true)
     {
-        std::string accountIDPrompt{ "What is your Account ID? (-1 to go back to the "+ std::string
-            (transactionType == "Withdraw" || transactionType == "Deposit" ? "Bank " : "Shopping ") + "Main Menu): "};
+        std::string accountIDPrompt{ "What is your Account ID? (-1 to go back to the "+ std::string(bankShoppingMainMenuStr(transactionType)) + "Main Menu): "};
 
         int accountID( getID(accountIDPrompt) );
 
         if (accountID == -1)
         {
-            break;
+            return PurchasingCustomer{};
         }
 
         Customer* customer{ findCustomerByAccountId(customers, accountID) };
@@ -281,47 +329,57 @@ PurchasingCustomer handleTransactionProcess(std::vector<Customer>& customers, st
             {
                 std::string prompt{""};
 
-                if (transactionType == "Withdraw" || transactionType == "Deposit")
+                if (checkTransactionType(transactionType))
                 {
-                    prompt = "Which account do you want to" + std::string(transactionType == "Withdraw" ? " withdraw from " : " deposit to ") + "(1 for Chequing, 2 for Savings): ";
+                    prompt = "Which account do you want to" + std::string(transactionType == Transaction::Withdrawal ? " withdraw from " : " deposit to ") + "(1 for Chequing, 2 for Savings): ";
                 }
 
-                if (transactionType == "Purchase")
+                else
                 {
                     prompt = "Which account do you want to use for this purchase? (1 for Chequing, 2 for Savings): ";
                 }
 
                 int accountTypeChoice{ getAccountTypeChoice(transactionType, prompt) };
 
-                PurchasingCustomer c{};
 
-                if (transactionType == "Withdraw" || transactionType == "Deposit")
+                if (checkTransactionType(transactionType))
                 {
                     std::string transactionPrompt{ "Enter the amount to be "
-                        + std::string(transactionType == "Deposit" ? "deposited to" : "withdrawn from") 
+                        + std::string(transactionType == Transaction::Deposit ? "deposited to" : "withdrawn from") 
                         + " your " + std::string(accountTypeChoice == 1 ? "chequing" : "savings") + " account: " };
 
                     double getProcessAmount{ getAmount(transactionType, transactionPrompt) };
 
-                    handleCustomerAction(transactionType, accountTypeChoice, customer, getProcessAmount);
+                    Transaction::Status status{};
 
-                    std::cout << "\n--- Updated Account Details ---\n";
-                    customer->printBalances();
+                    if (handleCustomerAction(transactionType, accountTypeChoice, customer, getProcessAmount))
+                    {
+                        status = Transaction::Successful;
+                    }
 
-                    c.setAccountType(0);
-                    c.setCustomer(nullptr);
+                    else
+                    {
+                        status = Transaction::Unsuccessful;
 
-                    pressToContinue();
+                    }
 
                     // transaction logic
 
-                    /*
+                    BankAccount::Type bankAccountType{ getAccountType(accountTypeChoice)};
                     
-                    
-                    */
+                    double custAfterBalance{ balanceAfterTransaction(bankAccountType, customer)};
+                    Transaction newTransaction{ bankAccountType, transactionType, getProcessAmount, custAfterBalance, status  };
+
+                    // added to customer's transaction vector
+
+                    customer->addTransactionItems(newTransaction);
+                    customer->printTransaction();
+
+                    pressToContinue();
+                    return PurchasingCustomer{};
                 }
 
-                if (transactionType == "Purchase")
+                else
                 {
                     bool confirm{ confirmAccountUse(accountTypeChoice) };
 
@@ -330,25 +388,32 @@ PurchasingCustomer handleTransactionProcess(std::vector<Customer>& customers, st
                         continue;
                     }
 
+                    PurchasingCustomer c{};
                     c.setAccountType(accountTypeChoice);
                     c.setCustomer(customer);
 
+                    
+                    return c;
                 }
-
-                return c;
             }
+        }
+
+        if (customer == nullptr)
+        {
+            std::cout << "Customer not found! Please try again." << '\n';
+            continue;
         }
     }
 
 }
 
-double setupCheckingSavingsBalance(int checkingSavings)
+double setupCheckingSavingsBalance(int chequingSavings)
 {
     double initialBalance{};
 
     while (true)
     {
-        std::cout << "How much initial balance would you want to deposit to your " << (checkingSavings == 0 ? "checking" : "savings") << " account? (-1 to quit): ";
+        std::cout << "How much initial balance would you want to deposit to your " << (chequingSavings == 0 ? "chequing" : "savings") << " account? (-1 to quit): ";
         std::cin >> initialBalance;
 
         if (initialBalance == -1)
@@ -642,8 +707,8 @@ void editUpdateAccounts(std::vector<Customer>& customers)
 
 void testData(std::vector<Customer>& customers)
 {
-    Customer c(BankAccount(BankAccount::chequing, 100.00),
-        BankAccount(BankAccount::savings, 200.00),
+    Customer c(BankAccount(BankAccount::chequing, 1000.00),
+        BankAccount(BankAccount::savings, 1000.00),
         "Emile",
         "TEST LNAME",
         "EMAIL",
@@ -670,9 +735,6 @@ void showBankingMenu(std::vector<Customer>& customers, std::vector<Product>& pro
     while (true)
     {
         clearScreen();
-
-        std::string withdrawTransaction{ "Withdraw" };
-        std::string depositTransaction{ "Deposit" };
 
         std::cout << "=== BANK MANAGEMENT SYSTEM ===\n";
         std::cout << "\t1. View Account Details" << '\n';
@@ -704,11 +766,11 @@ void showBankingMenu(std::vector<Customer>& customers, std::vector<Product>& pro
             break;
 
         case 2:
-            handleTransactionProcess(customers, products, withdrawTransaction);
+            handleTransactionProcess(customers, products, Transaction::Withdrawal);
             break;
 
         case 3:
-            handleTransactionProcess(customers, products, depositTransaction);
+            handleTransactionProcess(customers, products, Transaction::Deposit);
             break;
 
         case 4:
