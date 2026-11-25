@@ -1,5 +1,7 @@
 #include <iostream>
 #include "Transaction.h"
+#include "Product.h"
+#include "iomanip"
 
 std::string_view convertTransactionTypeToStr(Transaction::Type type)
 {
@@ -25,7 +27,7 @@ std::string_view convertStatusTypeToStr(Transaction::Status status)
 	}
 }
 
-void Transaction::printTransaction() const
+void Transaction::printTransactionBank() const
 {
 	std::cout << std::left << std::setw(10) << getTransactionID();
 	std::cout << std::setw(20) << convertBankAccountTypeToStr(getAccountType());
@@ -33,4 +35,18 @@ void Transaction::printTransaction() const
 	std::cout << std::right << std::setw(20) << std::format("${}", getTransactionAmount());
 	std::cout << std::right << std::setw(15) << std::format("${}", getBalanceAfter());
 	std::cout << std::right << std::setw(15) << convertStatusTypeToStr(getTransactionStatus());
+}
+
+void Transaction::printTransactionPurchase() const
+{
+	std::cout << std::left << std::setw(10) << getTransactionID();
+	std::cout << std::left << std::setw(20) << convertBankAccountTypeToStr(getAccountType());
+	std::cout << std::left << std::setw(20) << convertTransactionTypeToStr(getTransactionType());
+	std::cout << std::left << std::setw(20) << convertTypeToStr(getProductType());
+	std::cout << std::right << std::setw(15) << getProductName();
+	std::cout << std::right << std::setw(15) << std::format("${}", getUnitPrice());
+	std::cout << std::right << std::setw(15) << getTransactionQuantity();
+	std::cout << std::right << std::setw(15) << std::format("${}", getTransactionAmount());
+	std::cout << std::right << std::setw(15) << std::format("${}", getBalanceAfter());
+	std::cout << std::right << std::setw(10) << convertStatusTypeToStr(getTransactionStatus());
 }

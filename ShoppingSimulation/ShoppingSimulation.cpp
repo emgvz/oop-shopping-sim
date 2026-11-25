@@ -6,19 +6,17 @@
 #include "Customer.h"
 
 /*
- * TODO
- * Item class?
- * Store class
- * Transaction class
- * TABLE FORMATTING???
- */
+TODO
+
+balance after formatting,
+table formatting
+
+*/
 
 int main()
 {
     std::vector<Customer> customers {};
     std::vector<Product> products{};
-    // std::vector<Transaction> transactions{};
-
     
     testData(customers);
     insertProductData(products);
@@ -36,3 +34,5 @@ int main()
     
     return 0;
 }
+
+

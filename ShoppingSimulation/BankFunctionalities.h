@@ -104,7 +104,6 @@ Customer* findCustomerByAccountId(std::vector<Customer>& customers, int customer
     {
         if (customer.getId() == customerId)
         {
-            std::cout << "Account found!" << '\n';
             return &customer;
         }
     }
@@ -323,6 +322,8 @@ PurchasingCustomer handleTransactionProcess(std::vector<Customer>& customers, st
 
         if (customer != nullptr) // if customer exists
         {
+            std::cout << "Account found!" << '\n';
+
             customer->printBalances();
 
             while (true)
@@ -360,7 +361,6 @@ PurchasingCustomer handleTransactionProcess(std::vector<Customer>& customers, st
                     else
                     {
                         status = Transaction::Unsuccessful;
-
                     }
 
                     // transaction logic
@@ -373,7 +373,7 @@ PurchasingCustomer handleTransactionProcess(std::vector<Customer>& customers, st
                     // added to customer's transaction vector
 
                     customer->addTransactionItems(newTransaction);
-                    customer->printTransaction();
+                    customer->printTransactionBank();
 
                     pressToContinue();
                     return PurchasingCustomer{};
@@ -476,6 +476,33 @@ bool printTemporaryCustomer(Customer customer)
     }
 
 
+}
+
+void viewBankTransaction(std::vector<Customer>& customers)
+{
+    while (true)
+    {
+        clearScreen();
+
+        std::string_view accountIDPrompt{ "What is your Account ID? (-1 to go back to the Bank Main Menu): " };
+
+        int accountID{ getID(accountIDPrompt) };
+
+        if (accountID == -1)
+        {
+            return;
+        }
+
+        Customer* bankCustomer{ findCustomerByAccountId(customers, accountID) };
+
+        if (bankCustomer != nullptr)
+        {
+            std::cout << '\n';
+
+            bankCustomer->printTransactionBank();
+            pressToContinue();
+        }
+    }
 }
 
 void createNewAccount(std::vector<Customer>& customers)
@@ -738,11 +765,12 @@ void showBankingMenu(std::vector<Customer>& customers, std::vector<Product>& pro
 
         std::cout << "=== BANK MANAGEMENT SYSTEM ===\n";
         std::cout << "\t1. View Account Details" << '\n';
-        std::cout << "\t2. Withdraw Funds" << '\n';
-        std::cout << "\t3. Deposit Funds" << '\n';
-        std::cout << "\t4. Create New Accounts" << '\n';
-        std::cout << "\t5. Edit/Update Accounts" << '\n';
-        std::cout << "\t6. Back to Main Menu" << '\n' << '\n';
+        std::cout << "\t2. View Bank Transactions" << '\n';
+        std::cout << "\t3. Withdraw Funds" << '\n';
+        std::cout << "\t4. Deposit Funds" << '\n';
+        std::cout << "\t5. Create New Accounts" << '\n';
+        std::cout << "\t6. Edit/Update Accounts" << '\n';
+        std::cout << "\t7. Back to Main Menu" << '\n' << '\n';
 
         int option{};
 
@@ -766,23 +794,32 @@ void showBankingMenu(std::vector<Customer>& customers, std::vector<Product>& pro
             break;
 
         case 2:
-            handleTransactionProcess(customers, products, Transaction::Withdrawal);
+            viewBankTransaction(customers);
+            pressToContinue();
             break;
 
         case 3:
-            handleTransactionProcess(customers, products, Transaction::Deposit);
+            handleTransactionProcess(customers, products, Transaction::Withdrawal);
             break;
 
         case 4:
-            createNewAccount(customers);
+            handleTransactionProcess(customers, products, Transaction::Deposit);
             break;
 
         case 5:
-            editUpdateAccounts(customers);
+            createNewAccount(customers);
             break;
 
         case 6:
+            editUpdateAccounts(customers);
+            break;
+
+        case 7:
             return;
+
+        default:
+            std::cout << "Invalid input. Only choose from 1 - 7." << '\n' << '\n';
+            continue;
         }
     }
 }

@@ -13,7 +13,6 @@ std::string_view convertBankAccountTypeToStr(BankAccount::Type type)
     }
 }
 
-
 double BankAccount::getBalance() const
 {
     return m_balance;
@@ -27,6 +26,4 @@ void BankAccount::setBalance(double newBalance)
 void BankAccount::printBalance() const
 {
     std::cout << "$" << getBalance() << "\n";
-    
-    
 }

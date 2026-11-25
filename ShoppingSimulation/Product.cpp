@@ -27,7 +27,7 @@ std::string_view convertTypeToStr(Product::Type type)
 	}
 }
 
-std::string_view convertStatusToStr(Product::Status status)
+std::string_view convertAvailabilityToStr(Product::Status status)
 {
 	switch (status)
 	{
@@ -46,7 +46,7 @@ void Product::printProducts() const
 	std::cout << std::setw(15) << convertTypeToStr(getPType());
 	std::cout << std::setw(15) << std::format("${}",getPrice());
 	std::cout << std::right << std::setw(15) << getQuantity();
-	std::cout << std::right << std::setw(15) << convertStatusToStr(getPStatus()) << '\n';
+	std::cout << std::right << std::setw(15) << convertAvailabilityToStr(getPStatus()) << '\n';
 }
 
 void Product::printProductsCust() const

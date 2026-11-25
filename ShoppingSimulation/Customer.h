@@ -84,7 +84,8 @@ public:
     void addPurchasedItems(Product product, int custQtyPurchase);
     void printItemsBought() const;
     void addTransactionItems(Transaction transaction);
-    void printTransaction() const;
+    void printTransactionBank() const;
+    void printTransactionPurchase() const;
 };
 
 inline Customer::Customer(BankAccount chequingAccount,

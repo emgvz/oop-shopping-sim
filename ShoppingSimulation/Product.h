@@ -22,7 +22,6 @@ public:
 	{
 		InStock,
 		OutOfStock,
-/*		Pending,*/
 	};
 
 	Product(Type productType,
@@ -73,3 +72,6 @@ inline Product::Product(Type pType,
 	m_status{ pStatus }
 
 {}
+
+std::string_view convertTypeToStr(Product::Type type);
+std::string_view convertAvailabilityToStr(Product::Status status);

@@ -42,7 +42,8 @@ public:
 		        double unitPrice,
 				int transactionQuantity,
 				double transactionAmount,
-				double balanceAfter);
+				double balanceAfter,
+		Transaction::Status status);
 	// date and time will be added later in this format Hours::Minutes::Seconds
 	
 
@@ -69,7 +70,8 @@ public:
 	Transaction::Status getTransactionStatus() const { return m_transactionStatus; }
 	
 
-	void printTransaction() const;
+	void printTransactionBank() const;
+	void printTransactionPurchase() const;
 	
 	
 private:
@@ -114,7 +116,8 @@ inline Transaction::Transaction(BankAccount::Type accountType,
 	double unitPrice,
 	int transactionQuantity,
 	double transactionAmount,
-	double balanceAfter
+	double balanceAfter,
+	Transaction::Status status
 	) :
 
 	m_transactionID { s_idIdentifier++},
@@ -125,7 +128,8 @@ inline Transaction::Transaction(BankAccount::Type accountType,
 	m_unitPrice { unitPrice },
 	m_transactionQuantity { transactionQuantity },
 	m_transactionAmount { transactionAmount },
-	m_balanceAfter { balanceAfter }
+	m_balanceAfter { balanceAfter },
+	m_transactionStatus {status}
 	{}
 
 std::string_view convertTransactionTypeToStr(Transaction::Type type);

@@ -39,7 +39,7 @@ bool Customer::withdrawFromAccount(BankAccount::Type bankAccountType, double amo
     }
     else
     {
-        std::cout << "\nInsufficient amount to withdraw! Amount must be less than what you have in the account" << '\n' << '\n';
+        std::cout << "\nInsufficient funds! Please check the process amount again!" << '\n' << '\n';
         return false;
     }
 }
@@ -122,12 +122,15 @@ void Customer::printItemsBought() const
         return;
     }
 
+    std::cout << "Hi! " << getFullName() << ". These are your products" << '\n' << '\n';
+
+
     std::cout << std::left << std::setw(10) << "ID";
     std::cout << std::setw(20) << "Product Name";
     std::cout << std::setw(15) << "Type";
     std::cout << std::setw(15) << "Price";
     std::cout << std::right << std::setw(15) << "Quantity";
-    std::cout << std::right << std::setw(15) << "Total" << '\n'; // instead of Status we can do Total
+    std::cout << std::right << std::setw(15) << "Total" << '\n';
 
     std::cout << "==========================================================================================" << "\n" << "\n";
 
@@ -140,14 +143,15 @@ void Customer::printItemsBought() const
     std::cout << "==========================================================================================" << "\n" << "\n";
 }
 
-void Customer::printTransaction() const
+void Customer::printTransactionBank() const
 {
-
     if (m_custTransaction.empty())
     {
         std::cout << "There are no transactions available." << '\n' << '\n';
         return;
     }
+
+    std::cout << "Viewing transactions of " << getFullName() << '\n' << '\n';
 
     std::cout << std::left << std::setw(10) << "ID";
     std::cout << std::setw(20) << "Account Type";
@@ -161,12 +165,45 @@ void Customer::printTransaction() const
 
     for (const Transaction& t : m_custTransaction)
     {
-        t.printTransaction();
+        t.printTransactionBank();
         std::cout << '\n';
     }
 
     std::cout << "====================================================================================================" << "\n" << "\n";
 
 }
+
+void Customer::printTransactionPurchase() const
+{
+    if (m_productsOwned.empty())
+    {
+        std::cout << "There are no transactions available." << '\n' << '\n';
+        return;
+    }
+
+    std::cout << std::left << std::setw(10) << "ID";
+    std::cout << std::left << std::setw(20) << "Account Type";
+    std::cout << std::left << std::setw(20) << "Transaction Type";
+    std::cout << std::left << std::setw(20) << "Product Type";
+    std::cout << std::right << std::setw(15) << "Product Name";
+    std::cout << std::right << std::setw(15) << "Unit Price";
+    std::cout << std::right << std::setw(15) << "Quantity Bought";
+    std::cout << std::right << std::setw(15) << "Transaction Amount";
+    std::cout << std::right << std::setw(15) << "Balance";
+    std::cout << std::right << std::setw(10) << "Status" << '\n';
+
+    std::cout << "====================================================================================================" << "\n" << "\n";
+
+    for (const Transaction& t : m_custTransaction)
+    {
+        t.printTransactionPurchase();
+        std::cout << '\n';
+    }
+
+    std::cout << "====================================================================================================" << "\n" << "\n";
+
+}
+
+
 
 

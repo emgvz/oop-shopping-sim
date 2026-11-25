@@ -113,17 +113,17 @@ int getProductQty(Product* product)
 		std::cout << "How many of " << product->getPName() << " are you buying?: ";
 		std::cin >> pQty;
 
-		if (pQty <= 0)
-		{
-			ignoreLine();
-			std::cout << "Sorry! Quantities should be greater than 0" << '\n';
-			continue;
-		}
-
 		if (!std::cin)
 		{
 			ignoreLine();
 			std::cout << "Invalid quantity! Please try again!" << '\n';
+			continue;
+		}
+
+		if (pQty <= 0)
+		{
+			ignoreLine();
+			std::cout << "Sorry! Quantities should be greater than 0" << '\n';
 			continue;
 		}
 
@@ -211,9 +211,20 @@ void purchaseProducts(std::vector<Customer>& customer, std::vector<Product>& pro
 					double pPrice{ product->getPrice() };
 
 					// if qty of the customer > qty of product
-					double custTotal{ custQtyPurchase * product->getPrice() };
+					double custTotal{ custQtyPurchase * pPrice };
 
-					handleCustomerAction(transactionType, purchasingCust.getAccountType(), purchasingCust.getCustomer(), custTotal);
+					Transaction::Status orderStatus{};
+
+					if (handleCustomerAction(transactionType, purchasingCust.getAccountType(), purchasingCust.getCustomer(), custTotal))
+					{
+						orderStatus = Transaction::Successful;
+					}
+
+					else
+					{
+						orderStatus = Transaction::Unsuccessful;
+						break;
+					}
 
 					// make changes to the product's quantity
 					int newProductQty{ product->getQuantity() - custQtyPurchase };
@@ -230,14 +241,27 @@ void purchaseProducts(std::vector<Customer>& customer, std::vector<Product>& pro
 						product->updateQuantity(newProductQty);
 					}
 
+					BankAccount::Type accountUsedTransaction{ getAccountType(purchasingCust.getAccountType()) };
+
+					double custAfterBalance{ balanceAfterTransaction(accountUsedTransaction, purchasingCust.getCustomer()) };
+
+					Transaction newTransaction{ accountUsedTransaction,
+						transactionType,
+						product->getPType(),
+						product->getPName(),
+						product->getPrice(),
+						custQtyPurchase,
+						custTotal,
+						custAfterBalance,
+						orderStatus
+					};
+
 					// add purchased items to customer's shopping cart, prints their items (switching status and calculating total by getPrice() * getQty()
 
 					purchasingCust.getCustomer()->addPurchasedItems(*product, custQtyPurchase); // we're deferencing the pointer here to unwrap it
-					purchasingCust.getCustomer()->printItemsBought();
-					purchasingCust.getCustomer()->printBalances();
+					purchasingCust.getCustomer()->addTransactionItems(newTransaction);
+					purchasingCust.getCustomer()->printTransactionPurchase();
 
-					// TODO if customer buys the same item
-					// we can probably just add the quantity rather a new id? or a new entry to the vector
 					pressToContinue();
 				}
 				else // when customer ordered more than the products stock
@@ -248,11 +272,60 @@ void purchaseProducts(std::vector<Customer>& customer, std::vector<Product>& pro
 			}
 		}
 	}
-
 }
 
-void transactionHistory(std::vector<Customer>& customer, std::vector<Product>& product)
+void viewTransactionHistory(std::vector<Customer>& customer, std::vector<Product>& product)
 {
+	while (true)
+	{
+		clearScreen();
+
+		std::string_view accountIDPrompt{ "What is your Account ID? (-1 to go back to the Shopping Main Menu): " };
+
+		int accountID{ getID(accountIDPrompt) };
+
+		if (accountID == -1)
+		{
+			return;
+		}
+
+		Customer* transactionCustomer{ findCustomerByAccountId(customer, accountID) };
+		
+		if (transactionCustomer != nullptr)
+		{
+			std::cout << '\n';
+
+			transactionCustomer->printTransactionPurchase();
+			pressToContinue();
+		}
+	}
+}
+
+void viewPurchaseTransaction(std::vector<Customer>& customer, std::vector<Product>& product)
+{
+	while (true)
+	{
+		clearScreen();
+
+		std::string_view accountIDPrompt{ "What is your Account ID? (-1 to go back to the Shopping Main Menu): " };
+
+		int accountID{ getID(accountIDPrompt) };
+
+		if (accountID == -1)
+		{
+			return;
+		}
+
+		Customer* transactionCustomer{ findCustomerByAccountId(customer, accountID) };
+
+		if (transactionCustomer != nullptr)
+		{
+			std::cout << '\n';
+
+			transactionCustomer->printItemsBought();
+			pressToContinue();
+		}
+	}
 
 }
 
@@ -268,8 +341,10 @@ void showShoppingMenu(std::vector<Customer>& customers, std::vector<Product>& pr
 		std::cout << "=== SHOPPING MENU ===\n";
 		std::cout << "\t1. Browse Catalog" << '\n';
 		std::cout << "\t2. Make a Purchase" << '\n';
-		std::cout << "\t3. View Transaction History" << '\n';
-		std::cout << "\t4. Back to Main Menu" << '\n' << '\n';
+		std::cout << "\t3. View Purchase Transaction" << '\n';
+		std::cout << "\t4. View Purchased Items" << '\n';
+
+		std::cout << "\t5. Back to Main Menu" << '\n' << '\n';
 
 		std::cout << "Please choose an option: ";
 		std::cin >> shoppingOption;
@@ -277,12 +352,11 @@ void showShoppingMenu(std::vector<Customer>& customers, std::vector<Product>& pr
 		if (!std::cin)
 		{
 			ignoreLine();
-			std::cout << "Invalid input. Only choose from 1 - 4." << '\n';
+			std::cout << "Invalid input. Only choose from 1 - 5." << '\n';
 			continue;
 		}
 
 		ignoreLine();
-
 
 		switch (shoppingOption)
 		{
@@ -293,18 +367,23 @@ void showShoppingMenu(std::vector<Customer>& customers, std::vector<Product>& pr
 
 		case 2:
 			purchaseProducts(customers, products, purchaseTransaction);
-			pressToContinue();
 			break;
 
 		case 3:
-			// viewTransactionHistory();
+			viewTransactionHistory(customers, products);
+			pressToContinue();
 			break;
 
 		case 4:
+			viewPurchaseTransaction(customers, products);
+			pressToContinue();
+			break;
+
+		case 5:
 			return;
 
 		default:
-			std::cout << "Invalid input. Only choose from 1 - 4." << '\n' << '\n';
+			std::cout << "Invalid input. Only choose from 1 - 5." << '\n' << '\n';
 			continue;
 		}
 	}
